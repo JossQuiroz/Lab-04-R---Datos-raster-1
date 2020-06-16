@@ -1,5 +1,5 @@
 ---
-title: "Mapa_web_2.0"
+title: "Mapa web"
 
 
 author: "Josseling Quiroz &
