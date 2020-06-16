@@ -18,7 +18,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
 
+### Carga de paquetes
+```{r results='hide', warning = FALSE, message=FALSE}
 library(sf)
 library(dplyr)
 library(leaflet)
@@ -62,17 +65,9 @@ cr_precipitacion_anual <- crop(precipitacion, extent(-86, -82.3, 8, 11.3))
 cr_altitude <- crop(altitude, extent(-86, -82.3, 8, 11.3))
 
 ### Mapa web
+ pal <- colorNumeric( c("#06C000", "#F4FB16", "#FF0000"),  values(cr_altitude),  na.color = "transparent")
+ qpal <- colorNumeric( c("#0C2C84", "#41B6C4", "#FFFFCC"),  values(cr_precipitacion_anual$bio12_23),  na.color = "transparent")
 
-pal <- colorBin(
-  "Oranges", 
-  values(cr_altitude), 
-  na.color = "transparent"
-)
-fny <- colorNumeric(
-  palette = "Blues", 
-  values(cr_precipitacion_anual$bio12_23), 
-  na.color = "transparent"
-)
 m <- leaflet() %>% 
   addProviderTiles(providers$Esri.WorldImagery, group = "Imágenes de ESRI") %>% 
   addProviderTiles(providers$Stamen.TonerLite, group = "Stamen Toner Lite") %>%
@@ -96,8 +91,7 @@ m <- leaflet() %>%
                    group = "Pharomachrus mocinno", 
                    popup = paste( cr_pharomachrus_mocinno$locality,
                                   cr_pharomachrus_mocinno$year,
-                                 sep = '<br/>'
-                           )
+                                 sep = '<br/>')
   ) %>%
   addRasterImage(cr_altitude,
                  colors = pal, 
@@ -105,7 +99,7 @@ m <- leaflet() %>%
                  group = "Altitud",
   ) %>%
   addRasterImage(cr_precipitacion_anual$bio12_23,
-                 colors = "yellow", 
+                 colors = qpal, 
                  opacity = 0.8, 
                  group = "Precipitacion",
   ) %>%
@@ -116,18 +110,17 @@ m <- leaflet() %>%
   ) %>%
   addLegend(pal = pal, 
             values = values(cr_altitude), 
-            title = "Altitud"
+            title = "Altitud", position = "topleft"
   ) %>%
-  addLegend(pal = pal, 
+  addLegend(pal = qpal, 
             values = values(cr_precipitacion_anual), 
-            title = "Precipitacion"
+            title = "Precipitacion",position = "bottomright"
   ) %>%
   addMiniMap(
     toggleDisplay = TRUE,
     position = "bottomleft",
     tiles = providers$Stamen.TonerLite
   )
-
 ```
 
 
